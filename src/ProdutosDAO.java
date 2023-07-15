@@ -61,5 +61,20 @@ public class ProdutosDAO {
         }
         return listagem;
     }
+    public void venderProduto(int id){
+        conn = new conectaDAO().connectDB();
+        PreparedStatement ps = null;
+        String sql = "update produtos set status = ? where id =?";
+        
+try {
+    ps = conn.prepareStatement(sql);
+    ps.setString(1,"Vendido");
+    ps.setInt(2, id);
+    ps.executeUpdate();
+            
+} catch ( SQLException sqle ) {
+    System.out.println( "Erro no acesso ao Bando de Dados : "+ sqle.getMessage());
+}
+    }
 
 }
