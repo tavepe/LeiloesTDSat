@@ -46,35 +46,59 @@ public class ProdutosDAO {
             conn = new conectaDAO().connectDB();
             String sql = "select * from produtos";
             Statement stmt = conn.createStatement();
-            resultset=stmt.executeQuery(sql);
-            while(resultset.next()){
-                produto=new ProdutosDTO();
+            resultset = stmt.executeQuery(sql);
+            while (resultset.next()) {
+                produto = new ProdutosDTO();
                 produto.setId(resultset.getInt("id"));
                 produto.setNome(resultset.getString("nome"));
                 produto.setValor(resultset.getInt("valor"));
                 produto.setStatus(resultset.getString("status"));
                 listagem.add(produto);
-                
+
             }
         } catch (SQLException ex) {
-            
+
         }
         return listagem;
     }
-    public void venderProduto(int id){
+
+    public void venderProduto(int id) {
         conn = new conectaDAO().connectDB();
         PreparedStatement ps = null;
         String sql = "update produtos set status = ? where id =?";
-        
-try {
-    ps = conn.prepareStatement(sql);
-    ps.setString(1,"Vendido");
-    ps.setInt(2, id);
-    ps.executeUpdate();
-            
-} catch ( SQLException sqle ) {
-    System.out.println( "Erro no acesso ao Bando de Dados : "+ sqle.getMessage());
-}
+
+        try {
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, "Vendido");
+            ps.setInt(2, id);
+            ps.executeUpdate();
+
+        } catch (SQLException sqle) {
+            System.out.println("Erro no acesso ao Bando de Dados : " + sqle.getMessage());
+        }
     }
 
+    public ArrayList<ProdutosDTO> listarProdutosVendidos() {
+        ProdutosDTO produto;
+        PreparedStatement ps = null;
+        try {
+            conn = new conectaDAO().connectDB();
+            String sql = "SELECT * FROM produtos WHERE status LIKE ?";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, "Vendido");
+            resultset = ps.executeQuery();
+            while (resultset.next()) {
+                produto = new ProdutosDTO();
+                produto.setId(resultset.getInt("id"));
+                produto.setNome(resultset.getString("nome"));
+                produto.setValor(resultset.getInt("valor"));
+                produto.setStatus(resultset.getString("status"));
+                listagem.add(produto);
+
+            }
+        } catch (SQLException ex) {
+            System.out.println("erro aqui"+ ex.getMessage());
+        }
+        return listagem;
+    }
 }
